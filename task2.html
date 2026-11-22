@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Task 2 - Responsive Pricing Cards</title>
+<style>
+  /* 1. Box model reset */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: system-ui, -apple-system, sans-serif;
+    background-color: #f8fafc;
+    color: #0f172a;
+    padding: 2rem 1rem;
+    display: flex;
+    justify-content: center;
+  }
+
+  .component-container { width: 100%; max-width: 900px; }
+
+  h1 { font-size: 1.5rem; text-align: center; margin-bottom: 0.4rem; }
+  .sub { text-align: center; color: #64748b; margin-bottom: 1.5rem; }
+
+  /* ---------- Billing toggle pill (Flexbox) ---------- */
+  .toggle-wrap { text-align: center; margin-bottom: 2rem; }
+  .toggle {
+    display: inline-flex;
+    align-items: center;
+    background: #e2e8f0;
+    border-radius: 999px;
+    padding: 4px;
+  }
+  .toggle button {
+    border: 0;
+    background: transparent;
+    font: inherit;
+    font-weight: 600;
+    color: #475569;
+    padding: 0.5rem 1.25rem;
+    border-radius: 999px;
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease;
+  }
+  .toggle button.active { background: #fff; color: #4f46e5; box-shadow: 0 1px 3px rgba(0,0,0,.15); }
+
+  /* ---------- Mobile base: 1 column grid ---------- */
+  .pricing-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  /* ---------- Card: flex column so the button sits flush at the bottom ---------- */
+  .card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 6px rgba(15, 23, 42, 0.06);
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+  }
+  .card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 14px 28px rgba(15, 23, 42, 0.14);
+  }
+
+  .card h2 { font-size: 1.1rem; margin-bottom: 0.5rem; }
+  .price { font-size: 2rem; font-weight: 800; }
+  .price small { font-size: 0.9rem; font-weight: 500; color: #64748b; }
+  .features { list-style: none; margin: 1rem 0 1.5rem; display: grid; gap: 0.5rem; color: #334155; }
+  .features li::before { content: "\2713"; color: #4f46e5; font-weight: 700; margin-right: 0.5rem; }
+
+  .select {
+    width: 100%;
+    border: 0;
+    font: inherit;
+    font-weight: 600;
+    padding: 0.75rem;
+    border-radius: 10px;
+    cursor: pointer;
+    background: #e0e7ff;
+    color: #3730a3;
+    transition: transform 0.15s ease;
+  }
+  .select:active { transform: scale(0.96); }
+
+  /* ---------- Featured Pro card ---------- */
+  .card.featured { border-color: #6366f1; }
+  .card.featured .select { background: #4f46e5; color: #fff; }
+
+  .badge {
+    position: absolute;
+    top: -12px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #4f46e5;
+    color: #fff;
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 0.25rem 0.75rem;
+    border-radius: 999px;
+    z-index: 1;   /* keep badge above the glow ring */
+  }
+
+  /* Glow: a pseudo-element whose OPACITY pulses (GPU-friendly, no box-shadow animation) */
+  .card.featured::after {
+    content: "";
+    position: absolute;
+    inset: -3px;
+    border-radius: 19px;
+    border: 2px solid #818cf8;
+    box-shadow: 0 0 22px 4px rgba(99, 102, 241, 0.55);
+    pointer-events: none;
+    opacity: 0.25;
+    animation: glow-pulse 2s ease-in-out infinite;
+  }
+  @keyframes glow-pulse {
+    0%, 100% { opacity: 0.25; }
+    50%      { opacity: 1; }
+  }
+
+  /* ---------- Desktop breakpoint ---------- */
+  @media (min-width: 850px) {
+    .pricing-grid {
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .card.featured::after { animation: none; opacity: 0.7; }
+    .card, .select { transition: none; }
+  }
+</style>
+</head>
+<body>
+<main class="component-container">
+  <h1>Pick a plan</h1>
+  <p class="sub">Switch billing any time.</p>
+
+  <div class="toggle-wrap">
+    <div class="toggle" role="group" aria-label="Billing period">
+      <button type="button" class="active" data-period="monthly">Monthly</button>
+      <button type="button" data-period="annual">Annual</button>
+    </div>
+  </div>
+
+  <section class="pricing-grid">
+    <article class="card">
+      <div>
+        <h2>Starter</h2>
+        <p class="price">Free</p>
+        <ul class="features">
+          <li>1 project</li>
+          <li>Community support</li>
+        </ul>
+      </div>
+      <button class="select" type="button">Select Starter</button>
+    </article>
+
+    <article class="card featured">
+      <span class="badge">POPULAR</span>
+      <div>
+        <h2>Pro Plan</h2>
+        <p class="price"><span data-monthly="&#8377;799" data-annual="&#8377;639">&#8377;799</span><small>/mo</small></p>
+        <ul class="features">
+          <li>Unlimited projects</li>
+          <li>Priority support</li>
+          <li>Custom domains</li>
+          <li>Advanced analytics</li>
+        </ul>
+      </div>
+      <button class="select" type="button">Select Pro</button>
+    </article>
+
+    <article class="card">
+      <div>
+        <h2>Team</h2>
+        <p class="price"><span data-monthly="&#8377;1,999" data-annual="&#8377;1,599">&#8377;1,999</span><small>/mo</small></p>
+        <ul class="features">
+          <li>Everything in Pro</li>
+          <li>10 team seats</li>
+        </ul>
+      </div>
+      <button class="select" type="button">Select Team</button>
+    </article>
+  </section>
+</main>
+
+<script>
+  // Billing toggle: swaps the price text based on the chosen period
+  const buttons = document.querySelectorAll('.toggle button');
+  const prices = document.querySelectorAll('[data-monthly]');
+
+  buttons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      buttons.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      prices.forEach(p => { p.textContent = p.dataset[btn.dataset.period]; });
+    });
+  });
+</script>
+</body>
+</html>
